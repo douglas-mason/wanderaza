@@ -1,0 +1,205 @@
+
+<style>
+  .section-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-tertiary); margin-bottom: 0.75rem; }
+  .divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1.25rem 0; }
+  .week-block { margin-bottom: 1.5rem; }
+  .week-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .week-num { font-size: 12px; font-weight: 500; color: var(--color-text-tertiary); background: var(--color-background-secondary); padding: 3px 10px; border-radius: 999px; }
+  .week-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+  .week-goal { font-size: 12px; color: var(--color-text-secondary); margin-left: auto; font-style: italic; }
+  .task-list { display: flex; flex-direction: column; gap: 6px; }
+  .task { display: flex; align-items: flex-start; gap: 10px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 0.7rem 0.9rem; }
+  .task-icon { font-size: 16px; color: var(--color-text-tertiary); flex-shrink: 0; margin-top: 1px; }
+  .task-body { flex: 1; }
+  .task-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+  .task-detail { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; margin: 0; }
+  .task-tag { font-size: 11px; padding: 1px 7px; border-radius: 999px; margin-left: 8px; font-weight: 500; vertical-align: middle; }
+  .tag-infra { background: var(--color-background-secondary); color: var(--color-text-tertiary); }
+  .tag-product { background: var(--color-background-info); color: var(--color-text-info); }
+  .tag-data { background: var(--color-background-success); color: var(--color-text-success); }
+  .tag-ship { background: var(--color-background-warning); color: var(--color-text-warning); }
+  .milestone { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 0.85rem 1.1rem; display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .milestone-icon { font-size: 20px; color: var(--color-text-success); flex-shrink: 0; }
+  .milestone-text { font-size: 13px; color: var(--color-text-primary); font-weight: 500; }
+  .milestone-sub { font-size: 12px; color: var(--color-text-secondary); }
+  .cut-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cut-item { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.65rem 0.85rem; font-size: 12px; color: var(--color-text-secondary); display: flex; align-items: flex-start; gap: 7px; line-height: 1.4; }
+  .cut-item i { color: var(--color-text-danger); flex-shrink: 0; margin-top: 1px; }
+  .first-day { background: var(--color-background-primary); border: 2px solid var(--color-border-info); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
+  .first-day-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-info); margin-bottom: 0.6rem; }
+  .cmd { font-family: var(--font-mono); font-size: 12px; background: var(--color-background-secondary); padding: 6px 10px; border-radius: var(--border-radius-md); color: var(--color-text-primary); display: block; margin: 4px 0; }
+  .action-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; padding: 7px 14px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-primary); cursor: pointer; margin-top: 0.5rem; margin-right: 8px; }
+  .action-btn:hover { background: var(--color-background-secondary); }
+</style>
+
+<h2 class="sr-only">Day 1 build plan — week by week milestones for a solo bootstrapped travel platform MVP</h2>
+
+<div class="first-day">
+  <div class="first-day-label">Literal day 1 — the first 4 commands you run</div>
+  <code class="cmd">pnpm create next-app@latest apps/web --typescript --tailwind --app</code>
+  <code class="cmd">pnpm create fastify apps/api --lang=typescript</code>
+  <code class="cmd">pnpm dlx shadcn@latest init</code>
+  <code class="cmd">git init && git remote add origin [your repo]</code>
+  <p style="font-size:12px;color:var(--color-text-secondary);margin:10px 0 0;line-height:1.5">Before writing a single feature: get both apps running locally, talking to each other, and deployed (Vercel for web, Railway for API). A working CI/CD pipeline on day 1 means every evening session ends with something shipped.</p>
+</div>
+
+<div class="week-block">
+  <div class="week-header">
+    <span class="week-num">Week 1</span>
+    <span class="week-title">Scaffold + infrastructure</span>
+    <span class="week-goal">Goal: everything deployed, nothing useful yet</span>
+  </div>
+  <div class="task-list">
+    <div class="task">
+      <i class="ti ti-folder-code task-icon" aria-hidden="true"></i>
+      <div class="task-body">
+        <div class="task-name">Monorepo setup <span class="task-tag tag-infra">infra</span></div>
+        <p class="task-detail">pnpm workspaces with /apps/web (Next.js), /apps/api (Fastify), /packages/types (shared TS). Get both apps running and talking to each other locally.</p>
+      </div>
+    </div>
+    <div class="task">
+      <i class="ti ti-brand-vercel task-icon" aria-hidden="true"></i>
+      <div class="task-body">
+        <div class="task-name">Deploy pipeline day 1 <span class="task-tag tag-infra">infra</span></div>
+        <p class="task-detail">Vercel for Next.js (free). Railway for API + Postgres + Redis ($5–10/mo). Get a real URL immediately — psychological momentum matters for solo projects.</p>
+      </div>
+    </div>
+    <div class="task">
+      <i class="ti ti-key task-icon" aria-hidden="true"></i>
+      <div class="task-body">
+        <div class="task-name">Auth with Clerk <span class="task-tag tag-infra">infra</span></div>
+        <p class="task-detail">Install Clerk, protect nothing yet — just get sign-in/sign-up working. You'll gate itinerary saving behind auth later. Don't let auth block product work.</p>
+      </div>
+    </div>
+    <div class="task">
+      <i class="ti ti-database task-icon" aria-hidden="true"></i>
+      <div class="task-body">
+        <div class="task-name">Drizzle + base schema <span class="task-tag tag-infra">infra</span></div>
+        <p class="task-detail">Set up Drizzle ORM, run first migration. Just a users table and a trips table for now. Don't over-design the schema — add tables as you need them.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="week-block">
+  <div class="week-header">
+    <span class="week-num">Week 2</span>
+    <span class="week-title">Core search — events by date</span>
+    <span class="week-goal">Goal: search a city + dates, see real events</span>
+  </div>
+  <div class="task-list">
+    <div class="task">
+      <i class="ti ti-ticket task-icon" aria-hidden="true"></i>
+      <div class="task-body">
+        <div class="task-name">Ticketmaster API integration <span class="task-tag tag-data">data</span></div>
+        <p class="task-detail">Hit the Discovery API with city + date range, return events. This is your hero feature — the thing nobody else does cleanly. Get this working ugly first.</p>
+      </div>
+    </div>
+    <div class="task">
+      <i class="ti ti-calendar task-icon" aria-hidden="true"></i>
+      <div class="task-body">
+        <div class="task-name">Search UI — city + date picker <span class="task-tag tag-product">product</span></div>
+        <p class="task-detail">Simple form: destination input (text for now, geocode later), check-in / check-out date pickers, submit. shadcn Calendar component handles the date picker.</p>
+      </div>
+    </div>
+    <div class="task">
+      <i class="ti ti-list task-icon" aria-hidden="true"></i>
+      <div class="task-body">
+        <div class="task-name">Event results list <span class="task-tag tag-product">product</span></div>
+        <p class="task-detail">Display event name, date, venue, category, price range. Card grid layout. No map yet — list first. Cache Ticketmaster responses in Redis with a 2-hour TTL.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="week-block">
+  <div class="week-header">
+    <span class="week-num">Week 3</span>
+    <span class="week-title">Itinerary builder — the core loop</span>
+    <span class="week-goal">Goal: add an event to a trip, see it on a timeline</span>
+  </div>
+  <div class="task-list">
+    <div class="task">
+      <i class="ti ti-plus task-icon" aria-hidden="true"></i>
+      <div class="task-body">
+        <div class="task-name">"Add to trip" action <span class="task-tag tag-product">product</span></div>
+        <p class="task-detail">Button on each event card that adds it to an active trip. If not logged in, prompt to sign in (Clerk). This is the core interaction — get it feeling fast.</p>
+      </div>
+    </div>
+    <div class="task">
+      <i class="ti ti-layout-kanban task-icon" aria-hidden="true"></i>
+      <div class="task-body">
+        <div class="task-name">Trip timeline view <span class="task-tag tag-product">product</span></div>
+        <p class="task-detail">Day-by-day view of the trip with added items. No drag-and-drop yet — just a list per day. Drag-and-drop is a nice-to-have; a working timeline is the requirement.</p>
+      </div>
+    </div>
+    <div class="task">
+      <i class="ti ti-share task-icon" aria-hidden="true"></i>
+      <div class="task-body">
+        <div class="task-name">Shareable trip link <span class="task-tag tag-ship">ship</span></div>
+        <p class="task-detail">Generate a public /trip/[id] URL. Anyone with the link can view the itinerary — no account needed to view, account needed to create. This is your first viral loop.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="week-block">
+  <div class="week-header">
+    <span class="week-num">Week 4</span>
+    <span class="week-title">Restaurants + map view</span>
+    <span class="week-goal">Goal: a complete trip has events + dinner options on a map</span>
+  </div>
+  <div class="task-list">
+    <div class="task">
+      <i class="ti ti-tools-kitchen-2 task-icon" aria-hidden="true"></i>
+      <div class="task-body">
+        <div class="task-name">Google Places — restaurant search <span class="task-tag tag-data">data</span></div>
+        <p class="task-detail">Nearby restaurant search for the destination city. Store results in Postgres after first fetch — don't re-call Google Places for the same city repeatedly.</p>
+      </div>
+    </div>
+    <div class="task">
+      <i class="ti ti-map task-icon" aria-hidden="true"></i>
+      <div class="task-body">
+        <div class="task-name">Mapbox map view <span class="task-tag tag-product">product</span></div>
+        <p class="task-detail">Show all trip items (events + restaurants) as pins on a map alongside the list. react-map-gl makes this straightforward. This is the moment the product feels real.</p>
+      </div>
+    </div>
+    <div class="task">
+      <i class="ti ti-send task-icon" aria-hidden="true"></i>
+      <div class="task-body">
+        <div class="task-name">Send to a real person <span class="task-tag tag-ship">ship</span></div>
+        <p class="task-detail">Build a trip for a real destination you know. Send the shareable link to 3–5 friends or family. Watch how they interact with it. This feedback is worth more than a month of solo building.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section-label">End of month 1 milestone</div>
+<div class="milestone">
+  <i class="ti ti-circle-check milestone-icon" aria-hidden="true"></i>
+  <div>
+    <div class="milestone-text">A real person can plan a real trip</div>
+    <div class="milestone-sub">Search a city + dates → see events → add to itinerary → add restaurants → share a link. That's the loop. Everything after this is refinement and expansion.</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section-label">Deliberately cut from month 1</div>
+<div class="cut-list">
+  <div class="cut-item"><i class="ti ti-x" aria-hidden="true"></i>Hotel search (add in month 2 — affiliate setup takes time anyway)</div>
+  <div class="cut-item"><i class="ti ti-x" aria-hidden="true"></i>Drag-and-drop reordering (nice to have, not core)</div>
+  <div class="cut-item"><i class="ti ti-x" aria-hidden="true"></i>Business profiles / ad platform (month 3+ when you have users)</div>
+  <div class="cut-item"><i class="ti ti-x" aria-hidden="true"></i>Mobile app (web first, always)</div>
+  <div class="cut-item"><i class="ti ti-x" aria-hidden="true"></i>AI itinerary generation (tempting, adds complexity, not core)</div>
+  <div class="cut-item"><i class="ti ti-x" aria-hidden="true"></i>Email marketing (no list yet — build the list first)</div>
+</div>
+
+<div style="margin-top:1.5rem">
+  <div class="section-label">Go deeper</div>
+  <button class="action-btn" onclick="sendPrompt('Walk me through the database schema for the MVP — what tables do we need?')">DB schema ↗</button>
+  <button class="action-btn" onclick="sendPrompt('Show me a mockup of what the itinerary builder UI should look like')">Itinerary UI mockup ↗</button>
+  <button class="action-btn" onclick="sendPrompt('How should I structure the Fastify API — what routes do I need for the MVP?')">API routes ↗</button>
+</div>

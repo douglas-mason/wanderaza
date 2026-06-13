@@ -1,0 +1,252 @@
+
+<style>
+  *{box-sizing:border-box}
+  .app{display:grid;grid-template-columns:1fr 340px;gap:0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);min-height:560px}
+  .left-panel{border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column}
+  .topbar{padding:12px 16px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:10px;flex-shrink:0}
+  .brand{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+  .search-bar{display:flex;align-items:center;gap:8px;flex:1;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:0 10px;height:32px}
+  .search-bar input{border:none;background:transparent;font-size:13px;color:var(--color-text-primary);outline:none;flex:1;padding:0}
+  .search-bar i{font-size:14px;color:var(--color-text-tertiary)}
+  .date-pill{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:4px 10px;white-space:nowrap;flex-shrink:0}
+  .filters{padding:10px 16px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;gap:6px;flex-shrink:0}
+  .filter-pill{font-size:12px;padding:4px 12px;border-radius:999px;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;white-space:nowrap}
+  .filter-pill.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+  .results{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+  .result-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px;display:flex;gap:12px;cursor:pointer;transition:border-color 0.15s}
+  .result-card:hover{border-color:var(--color-border-secondary)}
+  .result-card.added{border-color:var(--color-border-success);background:var(--color-background-success)}
+  .result-img{width:52px;height:52px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px}
+  .result-body{flex:1;min-width:0}
+  .result-name{font-size:13px;font-weight:500;color:var(--color-text-primary);margin:0 0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .result-meta{font-size:12px;color:var(--color-text-secondary);margin:0 0 6px}
+  .result-tags{display:flex;gap:4px;flex-wrap:wrap}
+  .tag{font-size:11px;padding:2px 7px;border-radius:999px;background:var(--color-background-secondary);color:var(--color-text-secondary)}
+  .tag-event{background:#E6F1FB;color:#0C447C}
+  .tag-food{background:#EAF3DE;color:#27500A}
+  .tag-price{background:#FAEEDA;color:#633806}
+  .add-btn{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;color:var(--color-text-secondary);font-size:16px;align-self:center;transition:all 0.15s}
+  .add-btn:hover{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+  .add-btn.done{background:var(--color-background-success);color:var(--color-text-success);border-color:var(--color-border-success)}
+  .right-panel{display:flex;flex-direction:column;background:var(--color-background-secondary)}
+  .trip-header{padding:12px 16px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+  .trip-title{font-size:14px;font-weight:500;color:var(--color-text-primary);margin:0 0 2px}
+  .trip-sub{font-size:12px;color:var(--color-text-secondary);margin:0}
+  .trip-actions{display:flex;gap:6px;margin-top:8px}
+  .trip-btn{font-size:12px;padding:4px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;gap:4px}
+  .trip-btn:hover{background:var(--color-background-secondary)}
+  .trip-btn.primary{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+  .day-section{padding:10px 16px}
+  .day-label{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
+  .itinerary-item{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;display:flex;gap:10px;align-items:flex-start;margin-bottom:6px}
+  .item-time{font-size:11px;color:var(--color-text-tertiary);min-width:36px;padding-top:1px}
+  .item-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+  .dot-event{background:#378ADD}
+  .dot-food{background:#639922}
+  .dot-hotel{background:#7F77DD}
+  .item-body{flex:1;min-width:0}
+  .item-name{font-size:12px;font-weight:500;color:var(--color-text-primary);margin:0 0 1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .item-detail{font-size:11px;color:var(--color-text-secondary);margin:0}
+  .item-remove{font-size:13px;color:var(--color-text-tertiary);cursor:pointer;padding:2px;flex-shrink:0}
+  .item-remove:hover{color:var(--color-text-danger)}
+  .empty-day{border:0.5px dashed var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px;text-align:center;font-size:12px;color:var(--color-text-tertiary);margin-bottom:6px}
+  .share-bar{padding:10px 16px;border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);flex-shrink:0;margin-top:auto}
+  .share-link{display:flex;align-items:center;gap:6px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:6px 10px}
+  .share-link span{font-size:12px;color:var(--color-text-tertiary);flex:1;font-family:var(--font-mono)}
+  .copy-btn{font-size:12px;color:var(--color-text-info);cursor:pointer;padding:2px 6px;border-radius:4px}
+  .copy-btn:hover{background:var(--color-background-info)}
+  .section-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-text-tertiary);margin-bottom:0.75rem}
+  .nav-tabs{display:flex;gap:0;border-bottom:0.5px solid var(--color-border-tertiary);padding:0 16px;flex-shrink:0;background:var(--color-background-primary)}
+  .nav-tab{font-size:13px;padding:8px 12px;color:var(--color-text-secondary);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px}
+  .nav-tab.active{color:var(--color-text-primary);border-bottom-color:var(--color-text-primary);font-weight:500}
+</style>
+
+<h2 class="sr-only">Interactive mockup of the travel itinerary builder — search panel on the left, trip timeline on the right</h2>
+
+<div style="padding:1rem 0">
+  <div class="app">
+
+    <div class="left-panel">
+      <div class="topbar">
+        <div class="brand"><i class="ti ti-map-2" aria-hidden="true" style="color:var(--color-text-info);margin-right:4px"></i>wander</div>
+        <div class="search-bar">
+          <i class="ti ti-search" aria-hidden="true"></i>
+          <input type="text" value="Nashville, TN" id="city-input" readonly>
+        </div>
+        <div class="date-pill">
+          <i class="ti ti-calendar" aria-hidden="true" style="font-size:13px"></i>
+          Oct 3 – 6
+        </div>
+      </div>
+
+      <div class="nav-tabs">
+        <div class="nav-tab active" onclick="switchTab('events',this)">Events</div>
+        <div class="nav-tab" onclick="switchTab('restaurants',this)">Restaurants</div>
+        <div class="nav-tab" onclick="switchTab('hotels',this)">Hotels</div>
+      </div>
+
+      <div class="filters">
+        <div class="filter-pill active" onclick="toggleFilter(this)">All</div>
+        <div class="filter-pill" onclick="toggleFilter(this)">Music</div>
+        <div class="filter-pill" onclick="toggleFilter(this)">Sports</div>
+        <div class="filter-pill" onclick="toggleFilter(this)">Arts</div>
+        <div class="filter-pill" onclick="toggleFilter(this)">Family</div>
+      </div>
+
+      <div class="results" id="results-list"></div>
+    </div>
+
+    <div class="right-panel">
+      <div class="trip-header">
+        <div class="trip-title">Nashville trip</div>
+        <div class="trip-sub">Oct 3 – 6 · 4 days · <span id="item-count">2</span> items added</div>
+        <div class="trip-actions">
+          <button class="trip-btn"><i class="ti ti-map" aria-hidden="true" style="font-size:13px"></i> Map view</button>
+          <button class="trip-btn primary"><i class="ti ti-share" aria-hidden="true" style="font-size:13px"></i> Share trip</button>
+        </div>
+      </div>
+
+      <div style="flex:1;overflow-y:auto" id="itinerary-panel">
+        <div class="day-section">
+          <div class="day-label">Thu Oct 3</div>
+          <div id="day-1"></div>
+          <div class="empty-day" id="day-1-empty" style="display:none">Drop items here</div>
+        </div>
+        <div class="day-section">
+          <div class="day-label">Fri Oct 4</div>
+          <div id="day-2"></div>
+          <div class="empty-day" id="day-2-empty" style="display:none">Drop items here</div>
+        </div>
+        <div class="day-section">
+          <div class="day-label">Sat Oct 5</div>
+          <div id="day-3"></div>
+          <div class="empty-day" id="day-3-empty" style="display:none">Drop items here</div>
+        </div>
+        <div class="day-section">
+          <div class="day-label">Sun Oct 6</div>
+          <div id="day-4"></div>
+          <div class="empty-day" id="day-4-empty" style="display:none">Drop items here</div>
+        </div>
+      </div>
+
+      <div class="share-bar">
+        <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.06em;font-weight:500">Shareable link</div>
+        <div class="share-link">
+          <span>wander.app/trip/nsh-oct3</span>
+          <span class="copy-btn" onclick="this.textContent='Copied!'"><i class="ti ti-copy" aria-hidden="true"></i> Copy</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const events = [
+  {id:1, icon:'🎸', name:'Luke Combs at Bridgestone Arena', meta:'Fri Oct 4 · 7:30 PM · Bridgestone Arena', tags:['Music','$85–220'], type:'event', day:2, time:'7:30 PM', dot:'dot-event'},
+  {id:2, icon:'🎭', name:'Nashville Symphony — Beethoven Night', meta:'Thu Oct 3 · 8:00 PM · Schermerhorn Center', tags:['Arts','$45–110'], type:'event', day:1, time:'8:00 PM', dot:'dot-event'},
+  {id:3, icon:'🏈', name:'Tennessee Titans vs. Colts', meta:'Sun Oct 6 · 1:00 PM · Nissan Stadium', tags:['Sports','$95–380'], type:'event', day:4, time:'1:00 PM', dot:'dot-event'},
+  {id:4, icon:'🎺', name:'Honky Tonk Bar Crawl — Broadway', meta:'Sat Oct 5 · 9:00 PM · Lower Broadway', tags:['Music','$25'], type:'event', day:3, time:'9:00 PM', dot:'dot-event'},
+  {id:5, icon:'🎪', name:'Tennessee State Fair', meta:'Oct 3–6 · All day · Fairgrounds Nashville', tags:['Family','$12'], type:'event', day:1, time:'12:00 PM', dot:'dot-event'},
+];
+
+const restaurants = [
+  {id:6, icon:'🍖', name:"Husk Nashville", meta:'Southern · $$$ · 0.4 mi from downtown', tags:['Southern','Top rated'], type:'food', day:1, time:'7:00 PM', dot:'dot-food'},
+  {id:7, icon:'🍗', name:"Prince's Hot Chicken", meta:'Hot chicken · $ · 2.1 mi', tags:['Hot chicken','Local icon'], type:'food', day:2, time:'12:00 PM', dot:'dot-food'},
+  {id:8, icon:'🥩', name:"The Catbird Seat", meta:'New American · $$$$ · Downtown', tags:['Chef's table','Upscale'], type:'food', day:3, time:'7:30 PM', dot:'dot-food'},
+];
+
+const hotels = [
+  {id:9, icon:'🏨', name:"Graduate Nashville", meta:'Vanderbilt area · $189/night', tags:['Boutique','Free wifi'], type:'hotel', day:1, time:'Check-in', dot:'dot-hotel'},
+  {id:10, icon:'🏨', name:"Thompson Nashville", meta:'The Gulch · $265/night', tags:['Rooftop bar','Trendy'], type:'hotel', day:1, time:'Check-in', dot:'dot-hotel'},
+];
+
+let currentTab = 'events';
+let added = new Set([1,6]);
+
+function getItems() {
+  if(currentTab==='events') return events;
+  if(currentTab==='restaurants') return restaurants;
+  return hotels;
+}
+
+function tagClass(tag) {
+  if(['Music','Arts','Sports','Family'].includes(tag)) return 'tag-event';
+  if(['Southern','Hot chicken','New American','Local icon','Top rated','Chef\'s table','Upscale'].includes(tag)) return 'tag-food';
+  if(tag.startsWith('$')) return 'tag-price';
+  return '';
+}
+
+function renderResults() {
+  const list = document.getElementById('results-list');
+  list.innerHTML = '';
+  getItems().forEach(item => {
+    const isAdded = added.has(item.id);
+    const card = document.createElement('div');
+    card.className = 'result-card' + (isAdded?' added':'');
+    card.innerHTML = `
+      <div class="result-img">${item.icon}</div>
+      <div class="result-body">
+        <div class="result-name">${item.name}</div>
+        <div class="result-meta">${item.meta}</div>
+        <div class="result-tags">${item.tags.map(t=>`<span class="tag ${tagClass(t)}">${t}</span>`).join('')}</div>
+      </div>
+      <button class="add-btn ${isAdded?'done':''}" onclick="toggleAdd(${item.id})" aria-label="${isAdded?'Remove from trip':'Add to trip'}">
+        <i class="ti ti-${isAdded?'check':'plus'}" aria-hidden="true"></i>
+      </button>`;
+    list.appendChild(card);
+  });
+}
+
+function renderItinerary() {
+  const allItems = [...events,...restaurants,...hotels];
+  [1,2,3,4].forEach(day => {
+    const container = document.getElementById('day-'+day);
+    const empty = document.getElementById('day-'+day+'-empty');
+    const dayItems = allItems.filter(i=>added.has(i.id)&&i.day===day);
+    container.innerHTML = '';
+    dayItems.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'itinerary-item';
+      el.innerHTML = `
+        <div class="item-time">${item.time}</div>
+        <div class="item-dot ${item.dot}"></div>
+        <div class="item-body">
+          <div class="item-name">${item.name}</div>
+          <div class="item-detail">${item.type==='hotel'?'4 nights':'${item.tags[0]}'}</div>
+        </div>
+        <span class="item-remove" onclick="removeItem(${item.id})" aria-label="Remove"><i class="ti ti-x" aria-hidden="true"></i></span>`;
+      container.appendChild(el);
+    });
+    if(empty) empty.style.display = dayItems.length===0?'block':'none';
+  });
+  document.getElementById('item-count').textContent = added.size;
+}
+
+function toggleAdd(id) {
+  if(added.has(id)) { added.delete(id); } else { added.add(id); }
+  renderResults();
+  renderItinerary();
+}
+
+function removeItem(id) {
+  added.delete(id);
+  renderResults();
+  renderItinerary();
+}
+
+function switchTab(tab, el) {
+  currentTab = tab;
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderResults();
+}
+
+function toggleFilter(el) {
+  document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+renderResults();
+renderItinerary();
+</script>
