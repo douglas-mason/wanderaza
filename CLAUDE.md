@@ -102,3 +102,15 @@ Do not suggest or build these until explicitly asked:
 - Public trip view (`/trip/[share_slug]`) requires no auth; creating/editing requires Clerk auth
 - When adding a place or event to the DB cache, always set both `category_raw` (from source) and `category_internal` (via `normalizeCategory()`)
 - Resolve `trip_items` to detail via: `SELECT * FROM events WHERE external_id = ? AND source = ?` (or `places` for `item_type = 'place'`)
+
+## Backend Patterns
+
+- Favor separation of concerns
+- The API should use a controller and service pattern where controller methods are thin and manage the HTTP request concerns while business logic should be separated into service files.
+- The database layer should use a repository pattern.  When the service needs to access the database it should reference a query service.  The query service will reference repository files that have specific query methods exported.
+
+## Frontend Patterns
+
+- Keep component files small by breaking out logical UI elements into their own components.
+- Structure files as verticle slices by feature.
+- Only truly shareable components should be in a top level location, but logical grouped components specific to the feature should reside in the same feature folder.

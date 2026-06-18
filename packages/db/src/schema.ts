@@ -31,10 +31,6 @@ export const CATEGORIES = {
 
 export type Category = (typeof CATEGORIES)[keyof typeof CATEGORIES];
 
-/**
- * Maps raw category strings from external sources to internal taxonomy.
- * Add entries here as new sources are integrated.
- */
 export function normalizeCategory(raw: string): Category {
   const map: Record<string, Category> = {
     // Google Places
@@ -115,17 +111,13 @@ export const trips = pgTable('trips', {
 export const tripItems = pgTable('trip_items', {
   id:         uuid('id').primaryKey().defaultRandom(),
   tripId:     uuid('trip_id').notNull().references(() => trips.id, { onDelete: 'cascade' }),
-  // item_type tells you which cache table to resolve against (event | place | hotel)
   itemType:   varchar('item_type', { length: 20 }).notNull(),
-  // external_id + source together identify the row in events or places
   externalId: varchar('external_id', { length: 255 }),
   source:     varchar('source', { length: 50 }),
-  // Denormalized display fields — avoids a join just to render the itinerary
   title:      varchar('title', { length: 255 }).notNull(),
   venue:      varchar('venue', { length: 255 }),
   startTime:  timestamp('start_time', { withTimezone: true }),
   sortOrder:  integer('sort_order').notNull().default(0),
-  // Source-specific extras (ticket URL, nightly rate, price tier, etc.)
   metadata:   jsonb('metadata'),
   createdAt:  timestamp('created_at').defaultNow().notNull(),
 });
@@ -141,14 +133,12 @@ export const places = pgTable(
     categoryInternal: varchar('category_internal', { length: 50 }),
     lat:              real('lat'),
     lng:              real('lng'),
-    // Address
     addressFormatted: varchar('address_formatted', { length: 500 }),
     street:           varchar('street', { length: 255 }),
     city:             varchar('city', { length: 100 }),
     state:            varchar('state', { length: 100 }),
-    country:          varchar('country', { length: 2 }),  // ISO 3166-1 alpha-2
+    country:          varchar('country', { length: 2 }),
     postalCode:       varchar('postal_code', { length: 20 }),
-    // Details
     rating:           real('rating'),
     hours:            jsonb('hours'),
     cachedAt:         timestamp('cached_at').defaultNow().notNull(),
@@ -170,18 +160,15 @@ export const events = pgTable(
     name:             varchar('name', { length: 255 }).notNull(),
     categoryRaw:      varchar('category_raw', { length: 100 }),
     categoryInternal: varchar('category_internal', { length: 50 }),
-    // Venue
     venueName:        varchar('venue_name', { length: 255 }),
     lat:              real('lat'),
     lng:              real('lng'),
-    // Address
     addressFormatted: varchar('address_formatted', { length: 500 }),
     street:           varchar('street', { length: 255 }),
     city:             varchar('city', { length: 100 }),
     state:            varchar('state', { length: 100 }),
-    country:          varchar('country', { length: 2 }),  // ISO 3166-1 alpha-2
+    country:          varchar('country', { length: 2 }),
     postalCode:       varchar('postal_code', { length: 20 }),
-    // Timing & booking
     startTime:        timestamp('start_time', { withTimezone: true }),
     endTime:          timestamp('end_time', { withTimezone: true }),
     priceRange:       varchar('price_range', { length: 100 }),
@@ -197,16 +184,16 @@ export const events = pgTable(
 );
 
 // ---------------------------------------------------------------------------
-// Types (inferred from schema — use these in your API layer)
+// Types inferred from schema
 // ---------------------------------------------------------------------------
 
-export type User      = typeof users.$inferSelect;
-export type NewUser   = typeof users.$inferInsert;
-export type Trip      = typeof trips.$inferSelect;
-export type NewTrip   = typeof trips.$inferInsert;
-export type TripItem  = typeof tripItems.$inferSelect;
+export type User        = typeof users.$inferSelect;
+export type NewUser     = typeof users.$inferInsert;
+export type Trip        = typeof trips.$inferSelect;
+export type NewTrip     = typeof trips.$inferInsert;
+export type TripItem    = typeof tripItems.$inferSelect;
 export type NewTripItem = typeof tripItems.$inferInsert;
-export type Place     = typeof places.$inferSelect;
-export type NewPlace  = typeof places.$inferInsert;
-export type Event     = typeof events.$inferSelect;
-export type NewEvent  = typeof events.$inferInsert;
+export type Place       = typeof places.$inferSelect;
+export type NewPlace    = typeof places.$inferInsert;
+export type Event       = typeof events.$inferSelect;
+export type NewEvent    = typeof events.$inferInsert;
