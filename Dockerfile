@@ -21,7 +21,7 @@ COPY apps/api/ ./apps/api/
 RUN pnpm --filter @wanderaza/api build
 
 # pnpm deploy produces a self-contained directory: dist/ + production node_modules
-RUN pnpm deploy --filter @wanderaza/api --prod /deploy
+RUN pnpm deploy --filter @wanderaza/api --prod --legacy /deploy
 
 # ---- runner ----
 FROM node:22-alpine AS runner
