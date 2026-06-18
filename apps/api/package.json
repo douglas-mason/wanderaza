@@ -1,22 +1,27 @@
 {
   "name": "@wanderaza/api",
   "version": "0.0.1",
+  "files": ["dist"],
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "tsup",
     "start": "node dist/index.js",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",
-    "@wanderaza/db": "workspace:*",
-    "@wanderaza/types": "workspace:*",
     "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.43.0",
     "fastify": "^4.28.1",
+    "pg": "^8.13.0",
     "svix": "^1"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "@types/pg": "^8.11.0",
+    "@wanderaza/db": "workspace:*",
+    "@wanderaza/types": "workspace:*",
+    "tsup": "^8.3.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }
