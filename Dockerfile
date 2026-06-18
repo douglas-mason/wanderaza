@@ -28,6 +28,8 @@ FROM node:22-alpine AS runner
 
 WORKDIR /app
 COPY --from=builder /deploy .
+# Migration SQL files are read at runtime by dist/migrate.js
+COPY --from=builder /app/packages/db/drizzle ./drizzle
 
 EXPOSE 3001
 CMD ["node", "dist/index.js"]
