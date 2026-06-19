@@ -2,6 +2,7 @@ import 'dotenv/config';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { webhookRoutes } from './routes/webhooks';
+import { eventRoutes } from './routes/events';
 
 const server = Fastify({ logger: true });
 
@@ -12,6 +13,7 @@ server.register(cors, {
 server.get('/health', async () => ({ ok: true, version: '0.0.1' }));
 
 server.register(webhookRoutes);
+server.register(eventRoutes);
 
 const start = async () => {
   try {
