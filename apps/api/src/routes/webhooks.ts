@@ -1,24 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { Webhook } from 'svix';
-import { db, users } from '@wanderaza/db';
-
-interface ClerkEmailAddress {
-  id: string;
-  email_address: string;
-}
-
-interface ClerkUserEventData {
-  id: string;
-  email_addresses: ClerkEmailAddress[];
-  primary_email_address_id: string | null;
-  first_name: string | null;
-  last_name: string | null;
-}
-
-interface ClerkWebhookEvent {
-  type: 'user.created' | 'user.updated' | 'user.deleted' | string;
-  data: ClerkUserEventData;
-}
+import { handleUserCreatedOrUpdated, handleUserDeleted } from '../services/userService';
+import type { ClerkWebhookEvent } from '../types/clerk';
 
 export async function webhookRoutes(server: FastifyInstance) {
   // Override JSON parser in this scope to get raw string body for svix verification
@@ -57,23 +40,11 @@ export async function webhookRoutes(server: FastifyInstance) {
     }
 
     if (evt.type === 'user.created' || evt.type === 'user.updated') {
-      const { id: clerkId, email_addresses, primary_email_address_id, first_name, last_name } = evt.data;
-      const primaryEmail = email_addresses.find(e => e.id === primary_email_address_id);
-
-      if (primaryEmail) {
-        const nameParts = [first_name, last_name].filter((p): p is string => Boolean(p));
-        const displayName = nameParts.length > 0 ? nameParts.join(' ') : null;
-
-        await db
-          .insert(users)
-          .values({ clerkId, email: primaryEmail.email_address, displayName })
-          .onConflictDoUpdate({
-            target: users.clerkId,
-            set: { email: primaryEmail.email_address, displayName },
-          });
-
-        server.log.info({ clerkId, event: evt.type }, 'User upserted');
-      }
+      await handleUserCreatedOrUpdated(evt.data);
+      server.log.info({ clerkId: evt.data.id, event: evt.type }, 'User upserted');
+    } else if (evt.type === 'user.deleted') {
+      await handleUserDeleted(evt.data);
+      server.log.info({ clerkId: evt.data.id }, 'User deleted');
     }
 
     return reply.send({ received: true });
