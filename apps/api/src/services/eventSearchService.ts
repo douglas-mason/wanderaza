@@ -1,5 +1,8 @@
 import type { EventResult } from '@wanderaza/types';
+import { getOrSetCache } from '../lib/cache';
 import { eventsQueryService } from '../query-services/eventsQueryService';
+
+const SEARCH_CACHE_TTL_SECONDS = 60 * 60 * 2;
 
 export class ValidationError extends Error {}
 
@@ -25,11 +28,14 @@ export async function searchEvents(input: EventSearchInput): Promise<EventResult
     throw new ValidationError('startDate must be before endDate');
   }
 
-  const results = await eventsQueryService.searchEvents({
-    city,
-    startDateTime: `${input.startDate}T00:00:00Z`,
-    endDateTime: `${input.endDate}T23:59:59Z`,
-  });
+  const cacheKey = `events:search:${city.toLowerCase()}:${input.startDate}:${input.endDate}`;
+  const results = await getOrSetCache(cacheKey, SEARCH_CACHE_TTL_SECONDS, () =>
+    eventsQueryService.searchEvents({
+      city,
+      startDateTime: `${input.startDate}T00:00:00Z`,
+      endDateTime: `${input.endDate}T23:59:59Z`,
+    })
+  );
 
   if (!input.category) return results;
   return results.filter((event) => event.categoryInternal === input.category);
