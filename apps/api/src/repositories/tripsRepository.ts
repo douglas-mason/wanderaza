@@ -11,7 +11,13 @@ async function findById(id: string): Promise<Trip | undefined> {
   return trip;
 }
 
+async function findByShareSlug(shareSlug: string): Promise<Trip | undefined> {
+  const [trip] = await db.select().from(trips).where(eq(trips.shareSlug, shareSlug));
+  return trip;
+}
+
 export const tripsRepository = {
   insertTrip,
   findById,
+  findByShareSlug,
 };

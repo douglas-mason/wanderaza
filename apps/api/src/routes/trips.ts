@@ -5,6 +5,7 @@ import {
   addEventToTrip,
   createTrip,
   ForbiddenError,
+  getPublicTripByShareSlug,
   getTrip,
   NotFoundError,
   ValidationError,
@@ -18,6 +19,18 @@ interface CreateTripBody {
 }
 
 export async function tripRoutes(server: FastifyInstance) {
+  server.get<{ Params: { shareSlug: string } }>(
+    '/trips/shared/:shareSlug',
+    async (request, reply) => {
+      try {
+        const trip = await getPublicTripByShareSlug(request.params.shareSlug);
+        return reply.send({ trip });
+      } catch (err) {
+        return handleError(err, reply);
+      }
+    }
+  );
+
   server.post<{ Body: CreateTripBody }>('/trips', async (request, reply) => {
     try {
       const userId = await getAuthenticatedUserId(request.headers.authorization);

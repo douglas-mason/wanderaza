@@ -54,3 +54,12 @@ export async function getTrip(token: string, tripId: string): Promise<TripDetail
   const data = (await response.json()) as { trip: TripDetail };
   return data.trip;
 }
+
+export async function getPublicTrip(shareSlug: string): Promise<TripDetail | null> {
+  const response = await fetch(`${API_URL}/trips/shared/${shareSlug}`, { cache: 'no-store' });
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error('Failed to load trip');
+
+  const data = (await response.json()) as { trip: TripDetail };
+  return data.trip;
+}

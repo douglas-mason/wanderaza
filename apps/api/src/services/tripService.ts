@@ -109,3 +109,19 @@ export async function getTrip(userId: string, tripId: string): Promise<TripDetai
     items: items.map(toTripItemDetail),
   };
 }
+
+export async function getPublicTripByShareSlug(shareSlug: string): Promise<TripDetail> {
+  const trip = await tripsQueryService.findTripByShareSlug(shareSlug);
+  if (!trip || trip.visibility === 'private') {
+    throw new NotFoundError('Trip not found');
+  }
+
+  const items = await tripsQueryService.getTripItems(trip.id);
+
+  return {
+    ...toTripSummary(trip),
+    lat: trip.lat ?? undefined,
+    lng: trip.lng ?? undefined,
+    items: items.map(toTripItemDetail),
+  };
+}
