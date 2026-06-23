@@ -19,7 +19,13 @@ async function deleteByClerkId(clerkId: string) {
   await db.delete(users).where(eq(users.clerkId, clerkId));
 }
 
+async function findByClerkId(clerkId: string) {
+  const [user] = await db.select().from(users).where(eq(users.clerkId, clerkId));
+  return user;
+}
+
 export const userRepository = {
   upsertByClerkId,
   deleteByClerkId,
+  findByClerkId,
 };

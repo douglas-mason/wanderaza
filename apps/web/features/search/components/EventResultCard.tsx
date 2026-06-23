@@ -11,7 +11,13 @@ function formatStartTime(startTime?: string) {
   });
 }
 
-export function EventResultCard({ event }: { event: EventResult }) {
+interface EventResultCardProps {
+  event: EventResult;
+  isAdded: boolean;
+  onAdd: () => void;
+}
+
+export function EventResultCard({ event, isAdded, onAdd }: EventResultCardProps) {
   const formattedTime = formatStartTime(event.startTime);
 
   return (
@@ -27,16 +33,30 @@ export function EventResultCard({ event }: { event: EventResult }) {
           </span>
         )}
       </div>
-      {event.url && (
-        <a
-          href={event.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="self-center text-xs text-primary hover:underline whitespace-nowrap"
+      <div className="flex flex-col items-end gap-2 self-center">
+        <button
+          type="button"
+          onClick={onAdd}
+          disabled={isAdded}
+          className={`text-xs px-2.5 py-1 rounded-md border whitespace-nowrap transition-colors ${
+            isAdded
+              ? 'border-border bg-secondary text-secondary-foreground cursor-default'
+              : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
+          }`}
         >
-          View
-        </a>
-      )}
+          {isAdded ? 'Added' : 'Add to trip'}
+        </button>
+        {event.url && (
+          <a
+            href={event.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-muted-foreground hover:text-foreground hover:underline whitespace-nowrap"
+          >
+            View tickets
+          </a>
+        )}
+      </div>
     </div>
   );
 }
