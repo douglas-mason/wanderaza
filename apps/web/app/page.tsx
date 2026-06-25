@@ -1,4 +1,4 @@
-import { SearchExperience } from '@/features/search/SearchExperience';
+import { TripPlanner } from '@/features/trip/TripPlanner';
 
 export default function Home() {
   return (
@@ -9,7 +9,7 @@ export default function Home() {
           Plan trips around real events happening when you visit.
         </p>
       </div>
-      <SearchExperience />
+      <TripPlanner />
     </main>
   );
 }

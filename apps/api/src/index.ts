@@ -3,6 +3,7 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { webhookRoutes } from './routes/webhooks';
 import { eventRoutes } from './routes/events';
+import { tripRoutes } from './routes/trips';
 
 const server = Fastify({ logger: true });
 
@@ -14,6 +15,7 @@ server.get('/health', async () => ({ ok: true, version: '0.0.1' }));
 
 server.register(webhookRoutes);
 server.register(eventRoutes);
+server.register(tripRoutes);
 
 const start = async () => {
   try {

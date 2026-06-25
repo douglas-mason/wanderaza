@@ -11,6 +11,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@clerk/backend": "^3.8.2",
     "@fastify/cors": "^9.0.1",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.43.0",
