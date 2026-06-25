@@ -49,6 +49,12 @@ export async function addEventToTrip(
   return data.item;
 }
 
+export async function listTrips(token: string): Promise<TripSummary[]> {
+  const response = await authedFetch(token, '/trips');
+  const data = (await response.json()) as { trips: TripSummary[] };
+  return data.trips;
+}
+
 export async function getTrip(token: string, tripId: string): Promise<TripDetail> {
   const response = await authedFetch(token, `/trips/${tripId}`);
   const data = (await response.json()) as { trip: TripDetail };

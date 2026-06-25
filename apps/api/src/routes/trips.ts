@@ -7,6 +7,7 @@ import {
   ForbiddenError,
   getPublicTripByShareSlug,
   getTrip,
+  listTrips,
   NotFoundError,
   ValidationError,
 } from '../services/tripService';
@@ -36,6 +37,16 @@ export async function tripRoutes(server: FastifyInstance) {
       const userId = await getAuthenticatedUserId(request.headers.authorization);
       const trip = await createTrip(userId, request.body);
       return reply.status(201).send({ trip });
+    } catch (err) {
+      return handleError(err, reply);
+    }
+  });
+
+  server.get('/trips', async (request, reply) => {
+    try {
+      const userId = await getAuthenticatedUserId(request.headers.authorization);
+      const trips = await listTrips(userId);
+      return reply.send({ trips });
     } catch (err) {
       return handleError(err, reply);
     }

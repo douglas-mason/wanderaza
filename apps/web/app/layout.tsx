@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import Link from 'next/link';
 import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
 import './globals.css';
 
@@ -31,6 +32,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </SignUpButton>
               </SignedOut>
               <SignedIn>
+                <Link
+                  href="/trips"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  My Trips
+                </Link>
                 <UserButton />
               </SignedIn>
             </div>

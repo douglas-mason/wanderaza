@@ -66,6 +66,11 @@ export async function createTrip(userId: string, input: CreateTripInput): Promis
   return toTripSummary(trip);
 }
 
+export async function listTrips(userId: string): Promise<TripSummary[]> {
+  const trips = await tripsQueryService.findTripsByUserId(userId);
+  return trips.map(toTripSummary);
+}
+
 async function requireOwnedTrip(userId: string, tripId: string): Promise<Trip> {
   const trip = await tripsQueryService.findTripById(tripId);
   if (!trip) throw new NotFoundError('Trip not found');

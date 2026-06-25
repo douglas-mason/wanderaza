@@ -1,5 +1,5 @@
 import { db, trips, type NewTrip, type Trip } from '@wanderaza/db';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 
 async function insertTrip(input: NewTrip): Promise<Trip> {
   const [trip] = await db.insert(trips).values(input).returning();
@@ -16,8 +16,13 @@ async function findByShareSlug(shareSlug: string): Promise<Trip | undefined> {
   return trip;
 }
 
+async function findByUserId(userId: string): Promise<Trip[]> {
+  return db.select().from(trips).where(eq(trips.userId, userId)).orderBy(desc(trips.createdAt));
+}
+
 export const tripsRepository = {
   insertTrip,
   findById,
   findByShareSlug,
+  findByUserId,
 };
