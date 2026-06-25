@@ -26,6 +26,14 @@ async function getTripItems(tripId: string) {
   return tripItemsRepository.findByTripId(tripId);
 }
 
+async function removeItemFromTrip(itemId: string, tripId: string) {
+  return tripItemsRepository.deleteById(itemId, tripId);
+}
+
+async function deleteTrip(id: string) {
+  return tripsRepository.deleteById(id);
+}
+
 export const tripsQueryService = {
   createTrip,
   findTripById,
@@ -33,4 +41,6 @@ export const tripsQueryService = {
   findTripsByUserId,
   addItemToTrip,
   getTripItems,
+  removeItemFromTrip,
+  deleteTrip,
 };

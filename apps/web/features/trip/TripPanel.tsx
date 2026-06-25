@@ -1,12 +1,22 @@
+'use client';
+
+import { useState } from 'react';
 import type { TripItemDetail, TripSummary } from '@wanderaza/types';
 
 interface TripPanelProps {
   trip: TripSummary | null;
   items: TripItemDetail[];
+  onRemoveItem?: (itemId: string) => void;
+}
+
+function localDayKey(startTime: string) {
+  const date = new Date(startTime);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
 function formatDayLabel(dateKey: string) {
-  return new Date(dateKey).toLocaleDateString(undefined, {
+  const [year, month, day] = dateKey.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString(undefined, {
     weekday: 'long',
     month: 'short',
     day: 'numeric',
@@ -30,7 +40,7 @@ function groupItemsByDay(items: TripItemDetail[]): [string, TripItemDetail[]][] 
       undated.push(item);
       continue;
     }
-    const dateKey = item.startTime.slice(0, 10);
+    const dateKey = localDayKey(item.startTime);
     const group = groups.get(dateKey) ?? [];
     group.push(item);
     groups.set(dateKey, group);
@@ -43,7 +53,10 @@ function groupItemsByDay(items: TripItemDetail[]): [string, TripItemDetail[]][] 
   return sorted;
 }
 
-export function TripPanel({ trip, items }: TripPanelProps) {
+export function TripPanel({ trip, items, onRemoveItem }: TripPanelProps) {
+  const [copied, setCopied] = useState(false);
+  const isOwner = Boolean(onRemoveItem);
+
   if (!trip) {
     return (
       <div className="border border-dashed border-border rounded-lg p-6 text-sm text-muted-foreground">
@@ -53,6 +66,16 @@ export function TripPanel({ trip, items }: TripPanelProps) {
   }
 
   const dayGroups = groupItemsByDay(items);
+  const shareUrl =
+    typeof window !== 'undefined'
+      ? `${window.location.origin}/trip/${trip.shareSlug}`
+      : `/trip/${trip.shareSlug}`;
+
+  async function handleCopyShareLink() {
+    await navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -62,6 +85,18 @@ export function TripPanel({ trip, items }: TripPanelProps) {
           {trip.destination} · {trip.startDate} – {trip.endDate}
         </p>
       </div>
+      {isOwner && (
+        <div className="flex items-center gap-2 border border-border rounded-lg p-3">
+          <span className="text-xs text-muted-foreground truncate flex-1">{shareUrl}</span>
+          <button
+            type="button"
+            onClick={handleCopyShareLink}
+            className="text-xs px-2.5 py-1 rounded-md border border-border hover:bg-accent transition-colors whitespace-nowrap"
+          >
+            {copied ? 'Copied!' : 'Copy share link'}
+          </button>
+        </div>
+      )}
       {items.length === 0 ? (
         <p className="text-sm text-muted-foreground">No items yet — add an event from search.</p>
       ) : (
@@ -73,11 +108,25 @@ export function TripPanel({ trip, items }: TripPanelProps) {
               </h3>
               <div className="flex flex-col gap-2">
                 {dayItems.map((item) => (
-                  <div key={item.id} className="border border-border rounded-lg p-3">
-                    <p className="text-sm font-medium">{item.title}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {[item.venue, formatItemTime(item.startTime)].filter(Boolean).join(' · ')}
-                    </p>
+                  <div
+                    key={item.id}
+                    className="border border-border rounded-lg p-3 flex items-start justify-between gap-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium">{item.title}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {[item.venue, formatItemTime(item.startTime)].filter(Boolean).join(' · ')}
+                      </p>
+                    </div>
+                    {onRemoveItem && (
+                      <button
+                        type="button"
+                        onClick={() => onRemoveItem(item.id)}
+                        className="text-xs text-muted-foreground hover:text-destructive transition-colors whitespace-nowrap"
+                      >
+                        Remove
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>

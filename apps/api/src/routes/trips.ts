@@ -4,11 +4,13 @@ import { getAuthenticatedUserId, UnauthorizedError } from '../services/authServi
 import {
   addEventToTrip,
   createTrip,
+  deleteTrip,
   ForbiddenError,
   getPublicTripByShareSlug,
   getTrip,
   listTrips,
   NotFoundError,
+  removeItemFromTrip,
   ValidationError,
 } from '../services/tripService';
 
@@ -62,6 +64,16 @@ export async function tripRoutes(server: FastifyInstance) {
     }
   });
 
+  server.delete<{ Params: { id: string } }>('/trips/:id', async (request, reply) => {
+    try {
+      const userId = await getAuthenticatedUserId(request.headers.authorization);
+      await deleteTrip(userId, request.params.id);
+      return reply.status(204).send();
+    } catch (err) {
+      return handleError(err, reply);
+    }
+  });
+
   server.post<{ Params: { id: string }; Body: EventResult }>(
     '/trips/:id/items',
     async (request, reply) => {
@@ -69,6 +81,19 @@ export async function tripRoutes(server: FastifyInstance) {
         const userId = await getAuthenticatedUserId(request.headers.authorization);
         const item = await addEventToTrip(userId, request.params.id, request.body);
         return reply.status(201).send({ item });
+      } catch (err) {
+        return handleError(err, reply);
+      }
+    }
+  );
+
+  server.delete<{ Params: { id: string; itemId: string } }>(
+    '/trips/:id/items/:itemId',
+    async (request, reply) => {
+      try {
+        const userId = await getAuthenticatedUserId(request.headers.authorization);
+        await removeItemFromTrip(userId, request.params.id, request.params.itemId);
+        return reply.status(204).send();
       } catch (err) {
         return handleError(err, reply);
       }
