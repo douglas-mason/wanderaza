@@ -19,6 +19,7 @@ interface EventResultCardProps {
 
 export function EventResultCard({ event, isAdded, onAdd }: EventResultCardProps) {
   const formattedTime = formatStartTime(event.startTime);
+  const hasPassed = event.startTime ? new Date(event.startTime) < new Date() : false;
 
   return (
     <div className="border border-border rounded-lg p-3 flex gap-3 hover:border-muted-foreground/40 transition-colors">
@@ -37,14 +38,14 @@ export function EventResultCard({ event, isAdded, onAdd }: EventResultCardProps)
         <button
           type="button"
           onClick={onAdd}
-          disabled={isAdded}
+          disabled={isAdded || hasPassed}
           className={`text-xs px-2.5 py-1 rounded-md border whitespace-nowrap transition-colors ${
-            isAdded
+            isAdded || hasPassed
               ? 'border-border bg-secondary text-secondary-foreground cursor-default'
               : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
           }`}
         >
-          {isAdded ? 'Added' : 'Add to trip'}
+          {isAdded ? 'Added' : hasPassed ? 'Event has passed' : 'Add to trip'}
         </button>
         {event.url && (
           <a

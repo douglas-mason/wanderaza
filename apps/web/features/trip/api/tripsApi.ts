@@ -49,6 +49,14 @@ export async function addEventToTrip(
   return data.item;
 }
 
+export async function removeTripItem(token: string, tripId: string, itemId: string): Promise<void> {
+  await authedFetch(token, `/trips/${tripId}/items/${itemId}`, { method: 'DELETE' });
+}
+
+export async function deleteTrip(token: string, tripId: string): Promise<void> {
+  await authedFetch(token, `/trips/${tripId}`, { method: 'DELETE' });
+}
+
 export async function listTrips(token: string): Promise<TripSummary[]> {
   const response = await authedFetch(token, '/trips');
   const data = (await response.json()) as { trips: TripSummary[] };

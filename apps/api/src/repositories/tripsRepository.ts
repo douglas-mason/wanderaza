@@ -20,9 +20,15 @@ async function findByUserId(userId: string): Promise<Trip[]> {
   return db.select().from(trips).where(eq(trips.userId, userId)).orderBy(desc(trips.createdAt));
 }
 
+async function deleteById(id: string): Promise<boolean> {
+  const deleted = await db.delete(trips).where(eq(trips.id, id)).returning();
+  return deleted.length > 0;
+}
+
 export const tripsRepository = {
   insertTrip,
   findById,
   findByShareSlug,
   findByUserId,
+  deleteById,
 };

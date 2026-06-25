@@ -85,6 +85,10 @@ export async function addEventToTrip(
 ): Promise<TripItemDetail> {
   await requireOwnedTrip(userId, tripId);
 
+  if (event.startTime && new Date(event.startTime) < new Date()) {
+    throw new ValidationError('Cannot add an event that has already happened');
+  }
+
   const item = await tripsQueryService.addItemToTrip({
     tripId,
     itemType: 'event',
@@ -101,6 +105,22 @@ export async function addEventToTrip(
   });
 
   return toTripItemDetail(item);
+}
+
+export async function removeItemFromTrip(
+  userId: string,
+  tripId: string,
+  itemId: string
+): Promise<void> {
+  await requireOwnedTrip(userId, tripId);
+
+  const removed = await tripsQueryService.removeItemFromTrip(itemId, tripId);
+  if (!removed) throw new NotFoundError('Trip item not found');
+}
+
+export async function deleteTrip(userId: string, tripId: string): Promise<void> {
+  await requireOwnedTrip(userId, tripId);
+  await tripsQueryService.deleteTrip(tripId);
 }
 
 export async function getTrip(userId: string, tripId: string): Promise<TripDetail> {

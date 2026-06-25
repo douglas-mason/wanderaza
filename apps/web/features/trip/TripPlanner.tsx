@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth, useClerk } from '@clerk/nextjs';
 import type { EventResult, TripItemDetail, TripSummary } from '@wanderaza/types';
 import { SearchExperience, type SearchContext } from '../search/SearchExperience';
-import { addEventToTrip, createTrip, getTrip } from './api/tripsApi';
+import { addEventToTrip, createTrip, getTrip, removeTripItem } from './api/tripsApi';
 import { TripPanel } from './TripPanel';
 
 function eventKey(event: EventResult) {
@@ -101,6 +101,32 @@ export function TripPlanner({ tripId }: TripPlannerProps = {}) {
     }
   }
 
+  async function handleRemoveItem(itemId: string) {
+    if (!trip) return;
+    setError(null);
+
+    try {
+      const token = await getToken();
+      if (!token) {
+        openSignIn();
+        return;
+      }
+
+      await removeTripItem(token, trip.id, itemId);
+      setItems((prev) => prev.filter((item) => item.id !== itemId));
+      setAddedEventKeys((prev) => {
+        const removedItem = items.find((item) => item.id === itemId);
+        const key = removedItem && itemKey(removedItem);
+        if (!key) return prev;
+        const next = new Set(prev);
+        next.delete(key);
+        return next;
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not remove item from trip');
+    }
+  }
+
   if (isLoading) {
     return <p className="max-w-6xl mx-auto px-6 py-10 text-sm text-muted-foreground">Loading trip…</p>;
   }
@@ -110,7 +136,7 @@ export function TripPlanner({ tripId }: TripPlannerProps = {}) {
       <SearchExperience addedEventKeys={addedEventKeys} onAddToTrip={handleAddToTrip} />
       <div className="flex flex-col gap-3">
         {error && <p className="text-sm text-destructive">{error}</p>}
-        <TripPanel trip={trip} items={items} />
+        <TripPanel trip={trip} items={items} onRemoveItem={handleRemoveItem} />
       </div>
     </div>
   );
