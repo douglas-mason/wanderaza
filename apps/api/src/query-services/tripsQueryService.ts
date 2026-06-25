@@ -14,6 +14,10 @@ async function findTripByShareSlug(shareSlug: string) {
   return tripsRepository.findByShareSlug(shareSlug);
 }
 
+async function findTripsByUserId(userId: string) {
+  return tripsRepository.findByUserId(userId);
+}
+
 async function addItemToTrip(input: NewTripItem) {
   return tripItemsRepository.insertItem(input);
 }
@@ -26,6 +30,7 @@ export const tripsQueryService = {
   createTrip,
   findTripById,
   findTripByShareSlug,
+  findTripsByUserId,
   addItemToTrip,
   getTripItems,
 };
