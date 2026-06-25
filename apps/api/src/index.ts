@@ -7,8 +7,13 @@ import { tripRoutes } from './routes/trips';
 
 const server = Fastify({ logger: true });
 
+const allowedOrigins = (process.env.WEB_URL ?? 'http://localhost:3000')
+  .split(',')
+  .map((origin) => origin.trim().replace(/\/$/, ''))
+  .filter(Boolean);
+
 server.register(cors, {
-  origin: process.env.WEB_URL ?? 'http://localhost:3000',
+  origin: allowedOrigins,
 });
 
 server.get('/health', async () => ({ ok: true, version: '0.0.1' }));
